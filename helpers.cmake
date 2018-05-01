@@ -17,7 +17,7 @@ cmake_minimum_required(VERSION 3.7.2)
 set(RumprunPackagesDirectory ${CMAKE_CURRENT_LIST_DIR})
 
 # Somewhat generic function for generating ExternalProject target for rumprun-packages
-function(CreateRumprunPackagesExternalProject target_name rumptools_target package_name build_command bin_location)
+function(CreateRumprunPackagesExternalProject target_name rumptools_target package_name make_target bin_location)
 
     add_custom_target(${package_name}_rumptools_target)
     add_dependencies(${package_name}_rumptools_target ${rumptools_target})
@@ -34,11 +34,11 @@ function(CreateRumprunPackagesExternalProject target_name rumptools_target packa
         DEPENDS ${package_name}_rumptools_target
         CONFIGURE_COMMAND true
         EXCLUDE_FROM_ALL
-        BUILD_COMMAND   cd ${source_dir}
-        COMMAND  ${CMAKE_COMMAND} -E env PATH=$ENV{PATH}:$<TARGET_PROPERTY:${rumptools_target},RUMPRUN_TOOLCHAIN_PATH>
-        BUILD_DIR=${bin_dir} 
-        RUMPRUN_TOOLCHAIN_TUPLE=$<TARGET_PROPERTY:${rumptools_target},RUMPRUN_TOOLCHAIN_TUPLE> 
-        make ${build_command}
+        BUILD_COMMAND   cd ${source_dir} &&
+            ${CMAKE_COMMAND} -E env PATH=$ENV{PATH}:$<TARGET_PROPERTY:${rumptools_target},RUMPRUN_TOOLCHAIN_PATH>
+            BUILD_DIR=${bin_dir}
+            RUMPRUN_TOOLCHAIN_TUPLE=$<TARGET_PROPERTY:${rumptools_target},RUMPRUN_TOOLCHAIN_TUPLE>
+            make ${make_target}
         INSTALL_COMMAND true
         BUILD_ALWAYS ON
     )
