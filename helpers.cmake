@@ -17,7 +17,11 @@ cmake_minimum_required(VERSION 3.7.2)
 set(RumprunPackagesDirectory ${CMAKE_CURRENT_LIST_DIR})
 
 # Somewhat generic function for generating ExternalProject target for rumprun-packages
-function(CreateRumprunPackagesExternalProject target_name rumptools_target package_name make_target bin_location)
+function(CreateRumprunPackagesExternalProject target_name rumptools_target package_name bin_location)
+    cmake_parse_arguments(PARSE_ARGV 4 RUMPRUN "" "MAKE_TARGET" "")
+    if (NOT "${RUMPRUN_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(FATAL_ERROR "Unknown arguments to CreateRumprunPackagesExternalProject")
+    endif()
 
     add_custom_target(${package_name}_rumptools_target)
     add_dependencies(${package_name}_rumptools_target ${rumptools_target})
@@ -38,7 +42,7 @@ function(CreateRumprunPackagesExternalProject target_name rumptools_target packa
             ${CMAKE_COMMAND} -E env PATH=$ENV{PATH}:$<TARGET_PROPERTY:${rumptools_target},RUMPRUN_TOOLCHAIN_PATH>
             BUILD_DIR=${bin_dir}
             RUMPRUN_TOOLCHAIN_TUPLE=$<TARGET_PROPERTY:${rumptools_target},RUMPRUN_TOOLCHAIN_TUPLE>
-            make ${make_target}
+            make ${RUMPRUN_MAKE_TARGET}
         INSTALL_COMMAND true
         BUILD_ALWAYS ON
     )
@@ -58,5 +62,5 @@ endfunction()
 
 # Builds the redis server binary from the redis package
 function(RedisRumprunPackages target_name rumptools_target)
-    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} redis redis-server bin/redis-server)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} redis bin/redis-server MAKE_TARGET redis-server)
 endfunction()
