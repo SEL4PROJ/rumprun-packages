@@ -18,7 +18,7 @@ set(RumprunPackagesDirectory ${CMAKE_CURRENT_LIST_DIR})
 
 # Somewhat generic function for generating ExternalProject target for rumprun-packages
 function(CreateRumprunPackagesExternalProject target_name rumptools_target package_name bin_location)
-    cmake_parse_arguments(PARSE_ARGV 4 RUMPRUN "" "MAKE_TARGET" "")
+    cmake_parse_arguments(PARSE_ARGV 4 RUMPRUN "OUT_OF_TREE" "MAKE_TARGET" "")
     if (NOT "${RUMPRUN_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "Unknown arguments to CreateRumprunPackagesExternalProject")
     endif()
@@ -27,7 +27,11 @@ function(CreateRumprunPackagesExternalProject target_name rumptools_target packa
     add_dependencies(${package_name}_rumptools_target ${rumptools_target})
 
     set(source_dir ${RumprunPackagesDirectory}/${package_name})
-    set(bin_dir ${CMAKE_CURRENT_BINARY_DIR}/${package_name}-build)
+    if(RUMPRUN_OUT_OF_TREE)
+        set(bin_dir ${CMAKE_CURRENT_BINARY_DIR}/${package_name}-build)
+    else()
+        set(bin_dir ${RumprunPackagesDirectory}/${package_name})
+    endif()
     set(output_file ${bin_dir}/${bin_location})
     set(stamp_dir ${CMAKE_CURRENT_BINARY_DIR}/${package_name}-stamp)
 
@@ -62,5 +66,15 @@ endfunction()
 
 # Builds the redis server binary from the redis package
 function(RedisRumprunPackages target_name rumptools_target)
-    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} redis bin/redis-server MAKE_TARGET redis-server)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} redis bin/redis-server MAKE_TARGET redis-server OUT_OF_TREE)
+endfunction()
+
+# Builds cjpeg from jpeg package
+function(CjpegRumprunPackages target_name rumptools_target)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} jpeg build/jpeg-6a/cjpeg)
+endfunction()
+
+# Builds djpeg from jpeg package
+function(DjpegRumprunPackages target_name rumptools_target)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} jpeg build/jpeg-6a/djpeg)
 endfunction()
