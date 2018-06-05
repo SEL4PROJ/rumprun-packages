@@ -78,3 +78,8 @@ endfunction()
 function(DjpegRumprunPackages target_name rumptools_target)
     CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} jpeg build/jpeg-6a/djpeg)
 endfunction()
+
+# Builds the memcached binary from the memcached package
+function(MemcachedRumprunPackages target_name rumptools_target)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} memcached build/memcached)
+endfunction()
