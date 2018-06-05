@@ -83,3 +83,8 @@ endfunction()
 function(MemcachedRumprunPackages target_name rumptools_target)
     CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} memcached build/memcached)
 endfunction()
+
+# Builds nginx
+function(NginxRumprunPackages target_name rumptools_target)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} nginx bin/nginx)
+endfunction()
