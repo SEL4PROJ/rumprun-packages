@@ -88,3 +88,8 @@ endfunction()
 function(NginxRumprunPackages target_name rumptools_target)
     CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} nginx bin/nginx)
 endfunction()
+
+# Builds susan
+function(SusanRumprunPackages target_name rumptools_target)
+    CreateRumprunPackagesExternalProject(${target_name} ${rumptools_target} susan build/susan.o)
+endfunction()
